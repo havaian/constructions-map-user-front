@@ -4,6 +4,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import MapComponent from '../components/map_component.vue';
 import ProfileComponent from '../components/profile_component.vue';
+import LoginComponent from '../components/login_component.vue';
 
 const routes = [
     {
@@ -20,7 +21,11 @@ const routes = [
         name: 'Profile',
         component: ProfileComponent
     },
-    
+    {
+        path: '/auth/google',
+        name: 'Google Auth',
+        component: LoginComponent
+    },
 ];
 
 const router = createRouter({ 
