@@ -11,16 +11,7 @@
         name: "Map",
         
         mounted() {
-
-            // const base_url = 'https://constructions-map-server.havaian.repl.co';
-
-            // Function for dynamically changing the label of the current page
-            for (var x = 0; x < document.querySelector('.active.exact-active').attributes.length; x++) {
-                if (document.querySelector('.active.exact-active').attributes[x].name == 'modelvalue') {
-                    document.querySelector('#page-title').innerHTML = '';
-                    document.querySelector('#page-title').append(document.querySelector('.active.exact-active').attributes[x].nodeValue);
-                }
-            }
+            console.log(document.cookie);
             // Initializing map
             const map = L.map('map', {
                 drawControl: false,
@@ -81,21 +72,21 @@
                 drawOptions = {
                     position: 'topright',
                     draw: options.can_draw ? {
-                    polygon: {
-                        allowIntersection: false, // Restricts shapes to simple polygons
-                        drawError: {
-                            color: 'red', // Color the shape will turn when intersects
-                            message: 'Lines should not intersect', // Message that will show when intersect
-                        },
-                        shapeOptions: {
-                            color: '#50b8e7',
-                        }
-                    },
-                    circle: false,
-                    circlemarker: false,
-                    marker: false,
-                    polyline: false,
-                    rectangle: false,
+                        polygon: options.polygons ? {
+                            allowIntersection: false, // Restricts shapes to simple polygons
+                            drawError: {
+                                color: 'red', // Color the shape will turn when intersects
+                                message: 'Lines should not intersect', // Message that will show when intersect
+                            },
+                            shapeOptions: {
+                                color: '#50b8e7',
+                            }
+                        } : false,
+                        circle: false,
+                        circlemarker: false,
+                        marker: options.markers ? true : false,
+                        polyline: false,
+                        rectangle: false,
                     } : false,
                     edit: options.can_edit ? {
                     featureGroup: options.operatingLayer,
@@ -118,8 +109,8 @@
                 }
             }
 
-            // Function for area calculation
-            const findArea = (layer, events) => {
+            // Function for area calculation of a polygon
+            const findAreaPolygon = (layer, events) => {
                 if (events === 'created') {
                     var objects = layer.getLatLngs()[0];
                     geometry = [[]];
@@ -162,7 +153,7 @@
             }
 
             // Function for loading popups
-            const loadPopup = (events, layer) => {
+            const loadPopupPolygon = (events, layer) => {
             
                 if (events === 'created') {
                     popupContent = `
@@ -277,6 +268,8 @@
                             can_draw: true, 
                             can_edit: true, 
                             can_delete: true,
+                            polygons: true,
+                            markers: false,
                             operatingLayer: drawnItems,
                         }
                         reloadDrawControl('secondary', options);
@@ -356,6 +349,8 @@
                                                 can_draw: false, 
                                                 can_edit: true, 
                                                 can_delete: true,
+                                                polygons: true,
+                                                markers: false,
                                                 operatingLayer: editItems,
                                             }
                                             reloadDrawControl('secondary', options);
@@ -369,6 +364,8 @@
                                             can_draw: true, 
                                             can_edit: true, 
                                             can_delete: true,
+                                            polygons: true,
+                                            markers: false,
                                             operatingLayer: drawnItems,
                                         }
                                         reloadDrawControl('secondary', options);
@@ -376,7 +373,7 @@
                                 });
                         }
                     }).bindPopup(function (layer) {
-                        return popupContent = loadPopup('generated', layer);
+                        return popupContent = loadPopupPolygon('generated', layer);
                     }).addTo(map);
                 })
                 .catch(function (error) {
@@ -386,14 +383,21 @@
             };
             
             // Defining options for DrawControl
-            var options = {
-                can_draw: true, 
-                can_edit: true, 
-                can_delete: true,
-                operatingLayer: drawnItems,
+            var options;
+            var cookies = document.cookie.split("=");
+
+            if (cookies[2] === '001') {
+                options = {
+                    can_draw: true, 
+                    can_edit: false, 
+                    can_delete: false,
+                    polygons: false,
+                    markers: true,
+                    operatingLayer: drawnItems,
+                }
+                reloadDrawControl('initial', options);
             }
 
-            reloadDrawControl('initial', options);
             getAllBuildings();
 
             // Wrapper function for axios method of creating buildings
@@ -443,20 +447,6 @@
                 });
             }
 
-            // const editBuildingStop = () => {
-                // layerClickPrevent = false;
-                // Layer.clearLayers();
-                // editItems.clearLayers();
-                // getAllBuildings();
-                // var options = {
-                //     can_draw: true, 
-                //     can_edit: true, 
-                //     can_delete: true,
-                //     operatingLayer: drawnItems,
-                // }
-                // reloadDrawControl('secondary', options);
-            // }
-
             // Map event for creating layers
             map.on("draw:created", (e) => {
 
@@ -464,6 +454,8 @@
                     can_draw: false, 
                     can_edit: true, 
                     can_delete: true,
+                    polygons: true,
+                    markers: false,
                     operatingLayer: drawnItems,
                 }
                 reloadDrawControl('secondary', options);
@@ -471,8 +463,8 @@
                 layer = e.layer;
                 drawnItems.addLayer(layer);
 
-                findArea(layer, 'created');
-                loadPopup('created', layer);
+                findAreaPolygon(layer, 'created');
+                loadPopupPolygon('created', layer);
             
             });
             
@@ -481,30 +473,10 @@
                 
                 e.layers._layers = Object.values(editItems._layers);
                 layer = Object.values(editItems._layers)[0];
-                findArea(layer, 'edited');
-                loadPopup('edited', layer);
+                findAreaPolygon(layer, 'edited');
+                loadPopupPolygon('edited', layer);
             
             });
-            
-            // Map event for editing stopped
-            // map.on("draw:editstop", (e) => {
-            //     editBuildingStop(e);
-            // })
-
-            // Map event for starting deleting layers
-            // map.on("draw:deletestart", (e) => {
-
-            //     deleteStartStatus = true;
-
-            //     // var options = {
-            //     //     can_draw: true, 
-            //     //     can_edit: true, 
-            //     //     can_delete: true,
-            //     //     operatingLayer: drawnItems,
-            //     // }
-            //     // reloadDrawControl('secondary', options);
-
-            // });
             
             // Map event for deleting layers
             map.on("draw:deleted", (e) => {
@@ -513,7 +485,6 @@
                 deleteBuilding(id);
 
             });
-
         }
     }
 

@@ -1,9 +1,9 @@
-// import map_route_default from './map_route';
-// import map_route_redirect from './map_route';
-// import profile_route_default from '.profile_route';
 import { createRouter, createWebHistory } from 'vue-router';
 import MapComponent from '../components/map_component.vue';
 import ProfileComponent from '../components/profile_component.vue';
+import LoginComponent from '../components/signin_component.vue';
+import SingUpComponent from '../components/signup_component.vue';
+import ResetPassComponent from '../components/reset_password_component.vue';
 
 const routes = [
     {
@@ -14,6 +14,21 @@ const routes = [
     {
         path: '/map',
         redirect: '/',
+    },
+    {
+        path: '/sign-in',
+        name: 'Login',
+        component: LoginComponent
+    },
+    {
+        path: '/sign-up',
+        name: 'Sign Up',
+        component: SingUpComponent
+    },
+    {
+        path: '/reset-password',
+        name: 'Reset Password',
+        component: ResetPassComponent
     },
     {
         path: '/profile',
