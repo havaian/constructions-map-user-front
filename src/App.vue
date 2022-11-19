@@ -16,6 +16,10 @@
         </div>
     </div>
 
+    <div class="company-logo">
+      <img :src="companyLogo.icon" alt="">
+    </div>
+
     <div class="site-content">
       <router-view></router-view>
     </div>
@@ -43,7 +47,9 @@
             link: 'profile',
           },
         ],
-        pageTitle: 'Map'
+        companyLogo: {
+          icon: "./assets/YTTT.png",
+        }
       };
     },
     mounted() {
@@ -102,6 +108,22 @@
     left: 50px;
     bottom: 30px;
     cursor: pointer;
+  }
+
+  .company-logo {
+    position: fixed;
+    height: 40px;
+    width: 40px;
+    z-index: 999999;
+    right: 50px;
+    bottom: 30px;
+    cursor: pointer;
+  }
+
+  .company-logo img {
+    height: 100%;
+    width: 100%;
+    z-index: inherit;
   }
 
   .menu-icon__line {
