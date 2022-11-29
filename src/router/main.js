@@ -12,28 +12,23 @@ const routes = [
         component: MapComponent,
     },
     {
-        path: '/marker/:params',
-        name: 'Marker',
+        path: '/:params',
         component: MapComponent,
     },
     {
         path: '/sign-in',
-        name: 'Login',
         component: LoginComponent
     },
     {
         path: '/sign-up',
-        name: 'Sign Up',
         component: SingUpComponent
     },
     {
         path: '/reset-password',
-        name: 'Reset Password',
         component: ResetPassComponent
     },
     {
         path: '/profile',
-        name: 'Profile',
         component: ProfileComponent
     },
     
