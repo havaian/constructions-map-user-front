@@ -15,7 +15,7 @@ import router from '../router/main';
       data() {
       },
       mounted() {
-        if (document.cookie.split("=")) {
+        if (document.cookie.split("=")[0] && document.cookie.split("=")[1] && document.cookie.split("=")[2]) {
           $('.account-buttons').append(`
             <a id="edit-link" href="/reset-password"><p id="edit-icon">Изменить пароль</p></a>
             <a id="sign-out-link" href="javascript:void(0)"><p id="sing-out-icon">Выйти из аккаунта</p></a>
