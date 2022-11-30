@@ -8,8 +8,8 @@
 </template>
 
 <script>
+  import router from '../router/main';
 
-import router from '../router/main';
   export default {
       name: "Home",
       data() {
@@ -35,7 +35,10 @@ import router from '../router/main';
             document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
           }
 
-          window.location.href = "/";
+          router.push("/profile");
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         })
       },
 }
