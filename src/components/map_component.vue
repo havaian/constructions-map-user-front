@@ -333,6 +333,7 @@
                         })
 
                     } else if ('generated') {
+
                         let marker = layer.feature;
                         data = layer.feature.properties;
                         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -357,7 +358,7 @@
                                     </tr>
                                     <tr>
                                         <td>Ссылка</td>
-                                        <td><a href="javascript:void(0)" class="marker-link" value="/?marker=${marker.id}">Скопировать</a></td>
+                                        <td><p class="marker-link" value="/?marker=${marker.id}">Скопировать <span>>>></span></p></td>
                                     </tr>
                                 </table>
                             </div>
@@ -373,7 +374,7 @@
                     icon: icon,
                     title: message,
                     showConfirmButton: false,
-                    timer: 1500
+                    timer: 2500
                 })
             }
 
@@ -448,11 +449,6 @@
                 });
             };
 
-            const markerLinkClick = (e) => {
-                console.log($('.marker-link'));
-                // navigator.clipboard.writeText(text);
-            }
-
             // Getting all buildnigs from DB and diplaying them on map
             const getAllMarkers = () => {
                 axios.get('/get-all-markers')
@@ -474,7 +470,18 @@
                         states.features.push(state);
                     }
                     Layer = L.geoJSON(states, {
-                        onEachFeature: function (feature, layer) {}
+                        onEachFeature: function (feature, layer) {
+                            layer.on('click', (e) => {
+                                setTimeout((e) => {
+                                    $('.marker-link').click((e) => {
+                                        console.log(e);
+                                        const base_url = import.meta.env.VITE_link_base_url;
+                                        navigator.clipboard.writeText(base_url + e.target.attributes[1].nodeValue);
+                                        fireAlert('Ссылка успешно скопирована!', 'success');
+                                    })
+                                }, 500);
+                            })
+                        }
                     }).bindPopup(function (layer) {
                         return popupContent = loadPopupPolygon('marker', 'generated', layer);
                     }).addTo(map);
@@ -621,11 +628,6 @@
 
             });
         },
-        methods: {
-            markerLinkClick: (e) => {
-                console.log('click');
-            }
-        }
     }
 
 </script>
