@@ -357,7 +357,7 @@
                                     </tr>
                                     <tr>
                                         <td>Ссылка</td>
-                                        <td><a class="marker-link" href="/?marker=${marker.id}">Скопировать</td>
+                                        <td><a href="javascript:void(0)" class="marker-link" value="/?marker=${marker.id}">Скопировать</a></td>
                                     </tr>
                                 </table>
                             </div>
@@ -447,6 +447,11 @@
                     console.log(error);
                 });
             };
+
+            const markerLinkClick = (e) => {
+                console.log($('.marker-link'));
+                // navigator.clipboard.writeText(text);
+            }
 
             // Getting all buildnigs from DB and diplaying them on map
             const getAllMarkers = () => {
@@ -615,6 +620,11 @@
                 deleteBuilding(id);
 
             });
+        },
+        methods: {
+            markerLinkClick: (e) => {
+                console.log('click');
+            }
         }
     }
 
