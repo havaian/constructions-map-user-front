@@ -36,6 +36,9 @@
           }
 
           router.push("/profile");
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         })
       },
 }
